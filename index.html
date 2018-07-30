@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>PubNub Triva</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.4.21.2.js"></script>
+      <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+      <script src="./index.js"></script>
+      <style type="text/css">
+         @import url('https://fonts.googleapis.com/css?family=Roboto');
+         html,
+         body {
+         margin: 0px;
+         padding: 0px;
+         overflow: hidden;
+         font-family: 'Roboto', sans-serif;
+         }
+         h1 {
+         text-align: center;
+         margin: 20% 20px 0px 20px
+         }
+         .user-circle {
+         position: fixed;
+         display: table;
+         max-width: 50px;
+         top: 8px;
+         right: 8px;
+         }
+         .seconds-left {
+         width: 25px;
+         height: 25px;
+         position: fixed;
+         display: table;
+         max-width: 50px;
+         top: 8px;
+         left: 8px;
+         border: 2px solid #3f51b5;
+         border-radius: 50%;
+         font-size: 20px;
+         font-weight: bold;
+         text-align: center;
+         visibility: collapse;
+         }
+         .user-circle div {
+         display: table-cell;
+         width: 20px;
+         height: 20px;
+         font-size: 20px;
+         vertical-align: middle;
+         }
+         .icon-container {
+         padding-top: 4px;
+         }
+         ul {
+         padding: 0px;
+         margin: 5px auto;
+         }
+         li {
+         width: 100%;
+         height: 20px;
+         padding: 4px 0px;
+         margin: 5px auto;
+         text-align: center;
+         background-color: #FFFFFF;
+         text-transform: uppercase;
+         list-style-type: none;
+         cursor: pointer;
+         }
+         li.selected {
+         background-color: #3f51b5;
+         }
+         .question-container {
+         height: 30vh;
+         }
+         .answer-container {
+         height: 70vh;
+         }
+         .loading {
+         position: absolute;
+         width: 100%;
+         height: 100%;
+         top: 0px;
+         left: 0px;
+         background-color: #FFFFFF;
+         z-index: 1;
+         overflow: hidden;
+         visibility: hidden;
+         }
+         .show {
+         visibility: visible;
+         }
+         .loading-main {
+         position: absolute;
+         height: 200px;
+         width: 200px;
+         top: 50%;
+         left: 50%;
+         margin-left: -100px;
+         margin-top: -100px;
+         }
+         @keyframes lds-rolling {
+         0% {
+         -webkit-transform: translate(-50%, -50%) rotate(0deg);
+         transform: translate(-50%, -50%) rotate(0deg);
+         }
+         100% {
+         -webkit-transform: translate(-50%, -50%) rotate(360deg);
+         transform: translate(-50%, -50%) rotate(360deg);
+         }
+         }
+         @-webkit-keyframes lds-rolling {
+         0% {
+         -webkit-transform: translate(-50%, -50%) rotate(0deg);
+         transform: translate(-50%, -50%) rotate(0deg);
+         }
+         100% {
+         -webkit-transform: translate(-50%, -50%) rotate(360deg);
+         transform: translate(-50%, -50%) rotate(360deg);
+         }
+         }
+         .lds-rolling {
+         position: relative;
+         }
+         .lds-rolling div,
+         .lds-rolling div:after {
+         position: absolute;
+         width: 160px;
+         height: 160px;
+         border: 20px solid #3f51b5;
+         border-top-color: transparent;
+         border-radius: 50%;
+         }
+         .lds-rolling div {
+         -webkit-animation: lds-rolling 1s linear infinite;
+         animation: lds-rolling 1s linear infinite;
+         top: 100px;
+         left: 100px;
+         }
+         .lds-rolling div:after {
+         -webkit-transform: rotate(90deg);
+         transform: rotate(90deg);
+         }
+         .lds-rolling {
+         width: 200px !important;
+         height: 200px !important;
+         -webkit-transform: translate(-100px, -100px) scale(1) translate(100px, 100px);
+         transform: translate(-100px, -100px) scale(1) translate(100px, 100px);
+         }
+         p.correctAnswer {
+           visibility:collapse;
+         }
+         p.showCorrectAnswer {
+           position: absolute;
+           text-align: center;
+           top: 25%;
+           left: 25%;
+           right:25%;
+           bottom: 75%;
+           visibility: visible;
+         }
+         .answerResults {
+           position: fixed;
+           z-index: 1;
+           visibility: collapse;
+         }
+         .showAnswerResults {
+           position: fixed;
+           visibility: visible;
+         }
+      </style>
+      </div>
+      </style>
+   </head>
+   <body>
+      <div id="loading" class="show">
+         <div class="loading-main">
+            <div class="lds-css ng-scope">
+               <div style="width:100%;height:100%" class="lds-rolling">
+                  <div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <p id="correctAnswer" class="correctAnswer"></p>
+      <div>
+         <div id = "seconds-left" class="seconds-left">
+            <div id="seconds"></div>
+         </div>
+         <div class="user-circle">
+            <div id="num_players"></div>
+            <div class="icon-container">
+               <svg aria-hidden="true" data-prefix="fas" data-icon="user-circle" class="svg-inline--fa fa-user-circle fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512">
+                  <path fill="currentColor" d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm0 96c48.6 0 88 39.4 88 88s-39.4 88-88 88-88-39.4-88-88 39.4-88 88-88zm0 344c-58.7 0-111.3-26.6-146.5-68.2 18.8-35.4 55.6-59.8 98.5-59.8 2.4 0 4.8.4 7.1 1.1 13 4.2 26.6 6.9 40.9 6.9 14.3 0 28-2.7 40.9-6.9 2.3-.7 4.7-1.1 7.1-1.1 42.9 0 79.7 24.4 98.5 59.8C359.3 421.4 306.7 448 248 448z"></path>
+               </svg>
+            </div>
+         </div>
+         <div class="question-container">
+            <h1 id="question"></h1>
+         </div>
+         <div id="answerResults" class="answerResults" style="width: 480px; height: 400px;"></div>
+         <div class="answer-container">
+            <ul id="answerOptions">
+               <li id="optionA"></li>
+               <li id="optionB"></li>
+               <li id="optionC"></li>
+               <li id="optionD"></li>
+            </ul>
+         </div>
+      </div>
+   </body>
+</html>

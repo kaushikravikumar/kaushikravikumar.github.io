@@ -115,7 +115,19 @@ buttonOptionD.addEventListener("click", optionDSelected);
 
 function showQuestion(msg)
 {
+    // CLEAR ANSWER RESULTS VIEW
+    document.getElementById('correctAnswer').classList.remove("showCorrectAnswer");
+    document.getElementById('correctAnswer').classList.add("correctAnswer");
+    document.getElementById("answerResults").classList.remove("showAnswerResults");
+    document.getElementById("answerResults").classList.add("answerResults");
+    buttonOptionA.classList.remove("selected");
+    buttonOptionB.classList.remove("selected");
+    buttonOptionC.classList.remove("selected");
+    buttonOptionD.classList.remove("selected");
+
+
     document.getElementById('question').innerHTML = msg.question;
+    document.getElementById('answerOptions').style.visibility="visible";
 
     optionAText = msg.optionA;
     optionBText = msg.optionB;
@@ -138,6 +150,7 @@ function showQuestion(msg)
         // SUBMIT ANSWER!!
         submitAnswer(optionChosen);
         document.getElementById('answerOptions').style.visibility = "collapse";
+        document.getElementById(optionChosen).checked = false;
       }
     }, 1000);
 }

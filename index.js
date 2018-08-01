@@ -208,11 +208,13 @@ function showAnswerResults(msg)
 
   var layout = {
     xaxis: {
+    fixedrange: true,
     showgrid: false,
     zeroline: false,
     showticklabels: false
   },
   yaxis: {
+    fixedrange: true,
     showgrid: false,
     automargin: true,
     zeroline: false,

@@ -230,6 +230,7 @@ function showAnswerResults(msg)
     fixedrange: true,
     showgrid: false,
     zeroline: false,
+    nticks: 4
   },
     showlegend: false
   };

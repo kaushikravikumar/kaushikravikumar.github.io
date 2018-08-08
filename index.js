@@ -212,7 +212,7 @@ function showAnswerResults(msg)
     x: xValue,
     y: yValue,
     marker:{
-    color: ['rgb(70, 32, 102)', 'rgb(255, 184, 95)', 'rgb(255, 122, 90)', 'rgb(0, 170, 160)']
+    color: ['rgb(246,205,230)', 'rgb(255,229,188)', 'rgb(221,249,217)', 'rgb(173,217,254)']
     },
     text: xValue,
     textposition: 'auto',

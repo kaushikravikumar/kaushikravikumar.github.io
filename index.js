@@ -229,7 +229,6 @@ function showAnswerResults(msg)
   yaxis: {
     fixedrange: true,
     showgrid: false,
-    automargin: true,
     zeroline: false,
   },
     showlegend: false

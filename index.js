@@ -29,13 +29,15 @@ window.onload = function() {
               "uuid": uuid
           }
         };
-        return request(grant_access_url, 'POST', req_options).then((response) => {
+        request(grant_access_url, 'POST', req_options).then((response) => {
           console.log(response);
             if (response.status === 200) {
                 console.log('ACCESS GRANTED');
                 localStorage.setItem('accessToken', uuid);
             } else {
                 console.log('ACCESS DENIED');
+                alert('Access Denied, please try again.')
+                localStorage.setItem('accessToken', null);
             }
         });
     }
@@ -157,6 +159,9 @@ function showQuestion(msg)
 
 function submitAnswer(optionChosen)
 {
+    if(optionChosen === "optionA" || optionChosen === "optionB"
+    || optionChosen === "optionC" || optionChosen === "optionD")
+    {
       pubnub.fire({
           channel: "submitAnswer",
           message: {
@@ -166,6 +171,7 @@ function submitAnswer(optionChosen)
       }).then((publishResponse) => {
           console.log(publishResponse);
       });
+    }
 }
 
 function showCorrectAnswer(msg)

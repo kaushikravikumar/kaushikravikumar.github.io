@@ -55,6 +55,7 @@ function generate_UUID() {
 }
 
 function initPubNub() {
+  console.log('initpubnub');
     pubnub = new PubNub({
         subscribeKey: subscribe_key,
         publishKey: publish_key,
@@ -62,6 +63,10 @@ function initPubNub() {
         authKey: localStorage.getItem('accessToken'),
         ssl: true
     });
+    if(pubnub === null)
+    {
+      console.log('NULL REFERENCE');
+    }
     updateUI();
 }
 

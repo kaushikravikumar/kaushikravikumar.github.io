@@ -34,6 +34,7 @@ window.onload = function() {
             if (response.status === 200) {
                 console.log('ACCESS GRANTED');
                 localStorage.setItem('accessToken', uuid);
+                initPubNub();
             } else {
                 console.log('ACCESS DENIED');
                 alert('Access Denied, please try again.')
@@ -41,7 +42,9 @@ window.onload = function() {
             }
         });
     }
-    initPubNub();
+    else {
+      initPubNub();
+    }
 };
 
 function generate_UUID() {
@@ -55,7 +58,6 @@ function generate_UUID() {
 }
 
 function initPubNub() {
-  console.log('initpubnub');
     pubnub = new PubNub({
         subscribeKey: subscribe_key,
         publishKey: publish_key,
@@ -63,16 +65,12 @@ function initPubNub() {
         authKey: localStorage.getItem('accessToken'),
         ssl: true
     });
-    if(pubnub === null)
-    {
-      console.log('NULL REFERENCE');
-    }
+
     updateUI();
 }
 
 function updateUI()
 {
-  console.log('updateUI');
   pubnub.addListener({
       message: function(m) {
           var msg = m.message; // The Payload
@@ -91,10 +89,10 @@ function updateUI()
           }
       },
       presence: function(p) {
-
+          console.log(p);
       },
       status: function(s) {
-
+        console.log(s);
       }
   });
   pubnub.subscribe({

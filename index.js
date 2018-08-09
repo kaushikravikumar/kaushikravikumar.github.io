@@ -67,6 +67,7 @@ function initPubNub() {
 
 function updateUI()
 {
+  console.log('updateUI');
   pubnub.addListener({
       message: function(m) {
           var msg = m.message; // The Payload
